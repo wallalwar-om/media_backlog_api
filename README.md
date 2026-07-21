@@ -32,7 +32,3 @@ A RESTful web service built with Spring Boot to manage a personal backlog of med
 ### Prerequisites
 *   Java Development Kit (JDK) installed.
 *   Maven installed (or use the included Maven wrapper).
-
-1. Clone the repository:
-   ```bash
-   git clone [https://github.com/your-username/your-repo-name.git](https://github.com/your-username/your-repo-name.git)
