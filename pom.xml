@@ -28,6 +28,7 @@
 	</scm>
 	<properties>
 		<java.version>21</java.version>
+        <mockito.version>5.23.0</mockito.version>
 	</properties>
 	<dependencies>
 		<dependency>
@@ -119,6 +120,43 @@
 					</execution>
 				</executions>
 			</plugin>
+
+            <!-- ===================================================================================== -->
+            <!-- MOCKITO & JAVA 21+ WARNING FIXES (Currently disabled)                                 -->
+            <!-- Java 21+ restricts dynamic memory agents, causing Mockito to throw terminal warnings. -->
+            <!-- Choose ONE of the solutions below if you want to run Maven tests via the terminal.    -->
+            <!-- ===================================================================================== -->
+
+            <!--
+            SOLUTION 1: THE BAND-AID (Suppresses the warning)
+            Tells the JVM to allow dynamic agent loading without complaining.
+            -->
+
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-surefire-plugin</artifactId>
+                <configuration>
+                    <argLine>-XX:+EnableDynamicAgentLoading</argLine>
+                </configuration>
+            </plugin>
+
+            <!--
+            SOLUTION 2: THE INDUSTRY STANDARD (Permanent Fix)
+            Explicitly loads Mockito at startup to satisfy strict Java security rules.
+            NOTE: To use this, you must define <mockito.version> inside your <properties> tag at the top.
+            -->
+            <!--
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-surefire-plugin</artifactId>
+                <configuration>
+                    <argLine>
+                        @{argLine} -javaagent:${settings.localRepository}/org/mockito/mockito-core/${mockito.version}/mockito-core-${mockito.version}.jar
+                    </argLine>
+                </configuration>
+            </plugin>
+            -->
+
 		</plugins>
 	</build>
 
