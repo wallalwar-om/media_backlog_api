@@ -9,6 +9,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Objects;
 
 @Service // Spring registers THIS implementation as a bean
 @RequiredArgsConstructor
@@ -20,6 +21,22 @@ public class MediaServiceImpl implements MediaService {
     public List<MediaItem> getAllMedia() {
         return mediaRepository.findAll();
     }
+
+    /*
+     * =====================================================================================
+     * REFERENCE EXAMPLE: Throwing an exception when a list is empty.
+     *
+     * We cannot use .orElseThrow() here because findAll() returns a standard Java List,
+     * not an Optional. If we strictly wanted to return a 404/ErrorResponse instead of an
+     * empty array, we would have to manually check if the list is empty like this:
+     * =====================================================================================
+     *
+     * List<MediaItem> mediaList = mediaRepository.findAll();
+     * if (mediaList.isEmpty()) {
+     *     throw new NoMediaAvailable("No Media Content Available in the database!");
+     * }
+     * return mediaList;
+     */
 
     @Override
     public MediaItem addItem(MediaItemRequestDTO dto) {
@@ -38,5 +55,19 @@ public class MediaServiceImpl implements MediaService {
         // If not, it throws our custom exception, which gets caught by our GlobalExceptionHandler!
         return mediaRepository.findById(id)
                 .orElseThrow(() -> new MediaNotFoundException("Media not found!"));
+    }
+
+    @Override
+    public MediaItem updateItem(Long id, MediaItemRequestDTO updateDto) {
+        MediaItem item = findById(id);
+
+        if(!Objects.equals(item.getTitle(), updateDto.getTitle())) {
+            item.setTitle(updateDto.getTitle());
+        }
+        if(!Objects.equals(item.getType(), updateDto.getType())) {
+            item.setType(updateDto.getType());
+        }
+
+        return mediaRepository.save(item);
     }
 }

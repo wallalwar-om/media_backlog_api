@@ -5,6 +5,7 @@ import com.example.media_backlog_api.entity.MediaItem;
 import com.example.media_backlog_api.service.MediaService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -45,4 +46,9 @@ public class MediaController {
         return mediaService.findById(id);
     }
 
+    @PatchMapping("/{id}")
+    public ResponseEntity<MediaItem> updateMedia(@PathVariable Long id, @Valid @RequestBody MediaItemRequestDTO updateDto) {
+        MediaItem updatedItem = mediaService.updateItem(id, updateDto);
+        return ResponseEntity.ok(updatedItem);
+    }
 }

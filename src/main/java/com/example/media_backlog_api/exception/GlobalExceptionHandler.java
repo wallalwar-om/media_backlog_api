@@ -58,4 +58,15 @@ public class GlobalExceptionHandler {
                 null
         );
     }
+
+    @ExceptionHandler(NoMediaAvailable.class)
+    @ResponseStatus(HttpStatus.NOT_FOUND) // 404
+    public ErrorResponse handleNoContentException(NoMediaAvailable ex) {
+        return new ErrorResponse(
+                LocalDateTime.now(),
+                HttpStatus.NOT_FOUND.value(),
+                ex.getMessage(),
+                null
+        );
+    }
 }

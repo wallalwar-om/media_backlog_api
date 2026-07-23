@@ -11,6 +11,8 @@ import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -76,6 +78,24 @@ class MediaServiceImplTest {
 
         // Verify the database was checked
         Mockito.verify(mediaRepository, Mockito.times(1)).findById(badId);
+    }
+
+
+    @Test
+    void getALLMedia_ShouldReturnAllMedia() {
+
+        List<MediaItem> mediaItemList = new ArrayList<>();
+        mediaItemList.add(new MediaItem(1L, "The Matrix", "Movie", false));
+        mediaItemList.add(new MediaItem(2L, "Rocketry", "Movie", false));
+
+        Mockito.when(mediaRepository.findAll()).thenReturn(mediaItemList);
+
+        List<MediaItem> result = mediaService.getAllMedia();
+
+        assertNotNull(result);
+        assertEquals(mediaItemList, result);
+
+        Mockito.verify(mediaRepository, Mockito.times(1)).findAll();
     }
 }
 
