@@ -46,9 +46,23 @@ public class MediaController {
         return mediaService.findById(id);
     }
 
-    @PatchMapping("/{id}")
+    @DeleteMapping("{/id}")
+    public ResponseEntity<Void> deleteMedia(@PathVariable Long id) {
+
+        mediaService.deleteItem(id);
+        // Returns a 204 No Content status code
+        return ResponseEntity.noContent().build();
+    }
+
+    @PutMapping("{/id}")
     public ResponseEntity<MediaItem> updateMedia(@PathVariable Long id, @Valid @RequestBody MediaItemRequestDTO updateDto) {
         MediaItem updatedItem = mediaService.updateItem(id, updateDto);
         return ResponseEntity.ok(updatedItem);
+    }
+
+    @PatchMapping("/{id}")
+    public ResponseEntity<MediaItem> patchMedia(@PathVariable Long id, @Valid @RequestBody MediaItemRequestDTO patchDto) {
+        MediaItem patchedItem = mediaService.updateItem(id, patchDto);
+        return ResponseEntity.ok(patchedItem);
     }
 }

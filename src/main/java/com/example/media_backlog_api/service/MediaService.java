@@ -13,4 +13,6 @@ public interface MediaService {
     MediaItem findById(Long id);
 
     MediaItem updateItem(Long id, MediaItemRequestDTO updateDto);
+
+    void deleteItem(Long id);
 }

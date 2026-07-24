@@ -1,14 +1,13 @@
 package com.example.media_backlog_api.service.serviceImplTest;
 import com.example.media_backlog_api.dto.MediaItemRequestDTO;
 import com.example.media_backlog_api.entity.MediaItem;
+import com.example.media_backlog_api.mapper.MediaMapper;
+import com.example.media_backlog_api.mapper.MediaMapperImpl;
 import com.example.media_backlog_api.repository.MediaRepository;
 import com.example.media_backlog_api.service.serviceImpl.MediaServiceImpl;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.ArgumentMatchers;
-import org.mockito.InjectMocks;
-import org.mockito.Mock;
-import org.mockito.Mockito;
+import org.mockito.*;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.util.ArrayList;
@@ -29,6 +28,9 @@ class MediaServiceImplTest {
     // 3. Create the real Service, and inject the fake repository into its constructor!
     @InjectMocks
     private MediaServiceImpl mediaService;
+
+    @Spy
+    private MediaMapper mediaMapper = new MediaMapperImpl();
 
     @Test
     void addMedia_ShouldSetCompletedToFalseAndSave() {
@@ -96,6 +98,51 @@ class MediaServiceImplTest {
         assertEquals(mediaItemList, result);
 
         Mockito.verify(mediaRepository, Mockito.times(1)).findAll();
+    }
+
+    @Test
+    void updateMedia_ShouldUpdateAndReturnItem() {
+        Long itemId = 1L;
+
+        MediaItem existingItem = new MediaItem();
+        existingItem.setId(itemId);
+        existingItem.setTitle("Old Title");
+        existingItem.setType("Movie");
+        existingItem.setCompleted(false);
+
+        MediaItemRequestDTO updateDto = new MediaItemRequestDTO();
+        updateDto.setTitle("New Title"); // We are changing the title
+        updateDto.setType("Movie");      // The type stays the same
+
+        Mockito.when(mediaRepository.findById(itemId)).thenReturn(Optional.of(existingItem));
+
+        Mockito.when(mediaRepository.save(ArgumentMatchers.any(MediaItem.class))).thenReturn(existingItem);
+
+        MediaItem result = mediaService.updateItem(itemId, updateDto);
+
+        assertNotNull(result);
+        assertEquals("New Title", result.getTitle()); // Proves your Objects.equals() logic worked!
+        assertEquals("Movie", result.getType());      // Proves the type was untouched
+
+        // Proves the service checked the database and saved the new result
+        Mockito.verify(mediaRepository, Mockito.times(1)).findById(itemId);
+        Mockito.verify(mediaRepository, Mockito.times(1)).save(ArgumentMatchers.any(MediaItem.class));
+
+    }
+
+    @Test
+    void deleteItem_ShouldDeleteItem() {
+
+        Long itemId = 1L;
+        MediaItem existingItem = new MediaItem();
+        existingItem.setId(itemId);
+
+        Mockito.when(mediaRepository.findById(itemId)).thenReturn(Optional.of(existingItem));
+
+        mediaService.deleteItem(itemId);
+
+        Mockito.verify(mediaRepository, Mockito.times(1)).findById(itemId);
+        Mockito.verify(mediaRepository, Mockito.times(1)).delete(existingItem);
     }
 }
 

@@ -3,6 +3,7 @@ package com.example.media_backlog_api.service.serviceImpl;
 import com.example.media_backlog_api.dto.MediaItemRequestDTO;
 import com.example.media_backlog_api.entity.MediaItem;
 import com.example.media_backlog_api.exception.MediaNotFoundException;
+import com.example.media_backlog_api.mapper.MediaMapper;
 import com.example.media_backlog_api.repository.MediaRepository;
 import com.example.media_backlog_api.service.MediaService;
 import lombok.RequiredArgsConstructor;
@@ -16,6 +17,7 @@ import java.util.Objects;
 public class MediaServiceImpl implements MediaService {
 
     private final MediaRepository mediaRepository;
+    private final MediaMapper mediaMapper;
 
     @Override
     public List<MediaItem> getAllMedia() {
@@ -61,13 +63,21 @@ public class MediaServiceImpl implements MediaService {
     public MediaItem updateItem(Long id, MediaItemRequestDTO updateDto) {
         MediaItem item = findById(id);
 
-        if(!Objects.equals(item.getTitle(), updateDto.getTitle())) {
-            item.setTitle(updateDto.getTitle());
-        }
-        if(!Objects.equals(item.getType(), updateDto.getType())) {
-            item.setType(updateDto.getType());
-        }
+//        if(!Objects.equals(item.getTitle(), updateDto.getTitle())) {
+//            item.setTitle(updateDto.getTitle());
+//        }
+//        if(!Objects.equals(item.getType(), updateDto.getType())) {
+//            item.setType(updateDto.getType());
+//        }
 
+        mediaMapper.updateItemFromDto(updateDto, item);
         return mediaRepository.save(item);
     }
+
+    @Override
+    public void deleteItem(Long id) {
+        MediaItem item = findById(id);
+        mediaRepository.delete(item);
+    }
+
 }
