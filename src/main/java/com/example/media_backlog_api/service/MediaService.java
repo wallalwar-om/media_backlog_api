@@ -1,5 +1,6 @@
 package com.example.media_backlog_api.service;
 
+import com.example.media_backlog_api.dto.MediaItemPatchDTO;
 import com.example.media_backlog_api.dto.MediaItemRequestDTO;
 import com.example.media_backlog_api.entity.MediaItem;
 import jakarta.validation.Valid;
@@ -15,4 +16,6 @@ public interface MediaService {
     MediaItem updateItem(Long id, MediaItemRequestDTO updateDto);
 
     void deleteItem(Long id);
+
+    MediaItem patchItem(Long id, MediaItemPatchDTO patchDto);
 }

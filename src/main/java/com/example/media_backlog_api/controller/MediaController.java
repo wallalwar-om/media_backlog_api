@@ -1,5 +1,6 @@
 package com.example.media_backlog_api.controller;
 
+import com.example.media_backlog_api.dto.MediaItemPatchDTO;
 import com.example.media_backlog_api.dto.MediaItemRequestDTO;
 import com.example.media_backlog_api.entity.MediaItem;
 import com.example.media_backlog_api.service.MediaService;
@@ -46,7 +47,7 @@ public class MediaController {
         return mediaService.findById(id);
     }
 
-    @DeleteMapping("{/id}")
+    @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteMedia(@PathVariable Long id) {
 
         mediaService.deleteItem(id);
@@ -54,15 +55,15 @@ public class MediaController {
         return ResponseEntity.noContent().build();
     }
 
-    @PutMapping("{/id}")
+    @PutMapping("/{id}")
     public ResponseEntity<MediaItem> updateMedia(@PathVariable Long id, @Valid @RequestBody MediaItemRequestDTO updateDto) {
         MediaItem updatedItem = mediaService.updateItem(id, updateDto);
         return ResponseEntity.ok(updatedItem);
     }
 
     @PatchMapping("/{id}")
-    public ResponseEntity<MediaItem> patchMedia(@PathVariable Long id, @Valid @RequestBody MediaItemRequestDTO patchDto) {
-        MediaItem patchedItem = mediaService.updateItem(id, patchDto);
+    public ResponseEntity<MediaItem> patchMedia(@PathVariable Long id, @Valid @RequestBody MediaItemPatchDTO patchDto) {
+        MediaItem patchedItem = mediaService.patchItem(id, patchDto);
         return ResponseEntity.ok(patchedItem);
     }
 }

@@ -1,4 +1,5 @@
 package com.example.media_backlog_api.service.serviceImplTest;
+import com.example.media_backlog_api.dto.MediaItemPatchDTO;
 import com.example.media_backlog_api.dto.MediaItemRequestDTO;
 import com.example.media_backlog_api.entity.MediaItem;
 import com.example.media_backlog_api.mapper.MediaMapper;
@@ -143,6 +144,34 @@ class MediaServiceImplTest {
 
         Mockito.verify(mediaRepository, Mockito.times(1)).findById(itemId);
         Mockito.verify(mediaRepository, Mockito.times(1)).delete(existingItem);
+    }
+
+    @Test
+    void patchMediaItem_updatesOnlyProvidedFields() {
+        Long mediaId = 1L;
+        MediaItem existingItem = new MediaItem();
+        existingItem.setId(mediaId);
+        existingItem.setTitle("Original Title");
+        existingItem.setType("Original Type");
+
+        MediaItemPatchDTO patchDto = new MediaItemPatchDTO();
+        patchDto.setTitle("Updated Title");
+
+        Mockito.when(mediaRepository.findById(mediaId)).thenReturn(Optional.of(existingItem));
+        Mockito.when(mediaRepository.save(any(MediaItem.class))).thenAnswer(invocation -> invocation.getArgument(0));
+
+        MediaItem patchedItem = mediaService.patchItem(mediaId, patchDto);
+
+        assertNotNull(patchedItem);
+
+        // The title SHOULD change
+        assertEquals("Updated Title", patchedItem.getTitle());
+
+        // The type MUST remain the same (MapStruct ignored the nulls)
+        assertEquals("Original Type", patchedItem.getType());
+
+        Mockito.verify(mediaRepository).findById(mediaId);
+        Mockito.verify(mediaRepository).save(existingItem);
     }
 }
 
