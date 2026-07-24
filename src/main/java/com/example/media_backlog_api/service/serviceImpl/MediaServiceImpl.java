@@ -1,5 +1,6 @@
 package com.example.media_backlog_api.service.serviceImpl;
 
+import com.example.media_backlog_api.dto.MediaItemPatchDTO;
 import com.example.media_backlog_api.dto.MediaItemRequestDTO;
 import com.example.media_backlog_api.entity.MediaItem;
 import com.example.media_backlog_api.exception.MediaNotFoundException;
@@ -10,7 +11,6 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
-import java.util.Objects;
 
 @Service // Spring registers THIS implementation as a bean
 @RequiredArgsConstructor
@@ -80,4 +80,10 @@ public class MediaServiceImpl implements MediaService {
         mediaRepository.delete(item);
     }
 
+    @Override
+    public MediaItem patchItem(Long id, MediaItemPatchDTO patchDto) {
+        MediaItem item = findById(id);
+        mediaMapper.patchItemFromDto(patchDto, item);
+        return mediaRepository.save(item);
+    }
 }
